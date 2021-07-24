@@ -22,6 +22,49 @@ Notes:
 (function() {
     'use strict';
 
+        const clickMoreTransactionsButtonPromise = () => {return new Promise((resolve, reject) => {
+            var transactionsButton = document.getElementById("load-more-transactions-btn");
+            if(transactionsButton == undefined){
+                reject("Transaction button not initialised");;
+            }
+            console.log("Clicking transaction button");
+
+            setTimeout(() => {
+                transactionsButton.click()
+                console.log("Clicked, waiting...");
+                    setTimeout(() => {
+                    resolve("success");
+                }, 1000);
+            }, 500);
+        });
+     };
+
+
+    function expandTransactions() {
+        console.log("Expanding transactions");
+            return clickMoreTransactionsButtonPromise().then(()=> {
+                return clickMoreTransactionsButtonPromise();
+            }).then(() => {
+                setTimeout(()=> {
+                    console.log("Clicking menu button");
+                    var exportMenuButton = document.getElementById("export-link");
+                    exportMenuButton.click();
+                    return;
+                }, 1000);
+            }).then(() => {
+                console.log("About to select CSV export option");
+                setTimeout(() => {
+                    console.log("Clicking CSV option");
+                    var probableCSVOption = document.getElementById("export-format-type-CSV");
+                    probableCSVOption.click();
+                },500);
+            }).catch( err => {
+                console.log("error occurred");
+                console.log(err);
+            });
+    }
+
+
     function csvExportClick() {
         alert("Display modal");
         var modalElement = document.createElement("div");
@@ -31,10 +74,9 @@ Notes:
         bodyElement.appendChild(modalElement);
     }
 
-    window.addEventListener('load', function() {
-    // your code here
-        setTimeout(() => {
 
+    window.addEventListener('load', function() {
+        setTimeout(() => {
             var navBarList = document.getElementsByClassName("nav nav-tabs");
             if(navBarList.length>0) {
                 var navBarElement = navBarList[0];
@@ -43,13 +85,11 @@ Notes:
                 newNavButton.innerHTML = "Export CSV";
                 navBarElement.appendChild(newNavButton);
                 console.log("Button should appear");
-                navBarElement.onclick = () => csvExportClick();
+                navBarElement.onclick = () => {return expandTransactions()};
             } else {
                 console.log("No candidates....");
             }
         }, 2500);
-
     }, false);
 
-    // Your code here...
 })();
